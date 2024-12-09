@@ -34,19 +34,22 @@ class _TimerSelectionPageState extends State<TimerSelectionPage> {
   int _minutes = 0;
   int _seconds = 0;
 
-  void _onConfirm() {
+  void _startTimer() async {
     final duration = Duration(minutes: _minutes, seconds: _seconds);
+    await Future.delayed(duration);
+
+    // prevent the widget is still in the widget tree (not navigated to a different screen)
+    if (!mounted) return;
+    
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Timer Selected"),
+        title: const Text("Times up"),
         content: Text(
             "Duration: ${duration.inMinutes} min ${duration.inSeconds % 60} sec"),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text("OK"),
-          ),
+              onPressed: () => Navigator.pop(context), child: const Text("OK"))
         ],
       ),
     );
@@ -98,8 +101,8 @@ class _TimerSelectionPageState extends State<TimerSelectionPage> {
             ),
             const SizedBox(height: 40),
             ElevatedButton(
-              onPressed: _onConfirm,
-              child: const Text("Confirm Timer"),
+              onPressed: _startTimer,
+              child: const Text("Start Timer"),
             ),
           ],
         ),
