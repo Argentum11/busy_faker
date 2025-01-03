@@ -1,5 +1,9 @@
+import 'package:busy_faker/api_key.dart';
 import 'package:flutter/material.dart';
 import 'package:numberpicker/numberpicker.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'dart:developer' as dev;
 
 void main() {
   runApp(const BusyFaker());
@@ -17,7 +21,7 @@ class BusyFaker extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const TimerSelectionPage(),
+      home: const ChatPage(),
       debugShowCheckedModeBanner: false,
     );
   }
@@ -40,7 +44,7 @@ class _TimerSelectionPageState extends State<TimerSelectionPage> {
 
     // prevent the widget is still in the widget tree (not navigated to a different screen)
     if (!mounted) return;
-    
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -106,6 +110,83 @@ class _TimerSelectionPageState extends State<TimerSelectionPage> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class ChatPage extends StatefulWidget {
+  const ChatPage({super.key});
+
+  @override
+  State<ChatPage> createState() => _ChatPageState();
+}
+
+class _ChatPageState extends State<ChatPage> {
+  final TextEditingController _messageController = TextEditingController();
+
+  String _responseMessage = '';
+
+  Future<void> _saveMessage() async {
+    setState(() {
+      _responseMessage = 'Processing...';
+    });
+
+    const url = 'https://api.openai.com/v1/chat/completions';
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $gptApiKey',
+    };
+    final body = jsonEncode({
+      "model": "gpt-4o-mini",
+      "store": true,
+      "messages": [
+        {"role": "system", "content": "Respond in zh-tw"},
+        {"role": "user", "content": _messageController.text}
+      ]
+    });
+
+    try {
+      final response =
+          await http.post(Uri.parse(url), headers: headers, body: body);
+
+      if (response.statusCode == 200) {
+        final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+        final generatedMessage =
+            jsonResponse['choices'][0]['message']['content'];
+        dev.log('Response: $generatedMessage');
+        setState(() {
+          _responseMessage = generatedMessage; // Update with the AI response
+        });
+      } else {
+        dev.log('Error: ${response.statusCode} - ${response.body}');
+      }
+    } catch (e) {
+      dev.log('Exception: $e');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Chat Page'),
+      ),
+      body: Column(
+        children: [
+          TextField(
+            controller: _messageController,
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              labelText: 'Enter your message',
+            ),
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          TextButton(onPressed: _saveMessage, child: const Text("Chat")),
+          Text(_responseMessage)
+        ],
       ),
     );
   }
