@@ -4,6 +4,7 @@ import 'package:numberpicker/numberpicker.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'dart:developer' as dev;
+import 'package:busy_faker/speech/tts_service.dart';
 
 void main() {
   runApp(const BusyFaker());
@@ -55,7 +56,7 @@ class _TimerSelectionPageState extends State<TimerSelectionPage> {
           TextButton(
               onPressed: () => Navigator.pop(context), child: const Text("OK"))
         ],
-      ),
+        ),
     );
   }
 
@@ -124,11 +125,33 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   final TextEditingController _messageController = TextEditingController();
-
+  String _requestMessage = '';
   String _responseMessage = '';
 
+  // text to speech
+  final TtsService _ttsService = TtsService();
+  TtsState ttsState = TtsState.stopped;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeTts();
+  }
+
+  void _initializeTts() async {
+    await _ttsService.initialize();
+    _ttsService.onStateChanged = (TtsState newState) {
+      setState(() {
+        ttsState = newState;
+      });
+    };
+  }
+
   Future<void> _saveMessage() async {
+    _ttsService.stop();
+
     setState(() {
+      _requestMessage = _messageController.text;
       _responseMessage = 'Processing...';
     });
 
@@ -142,21 +165,20 @@ class _ChatPageState extends State<ChatPage> {
       "store": true,
       "messages": [
         {"role": "system", "content": "Respond in zh-tw"},
-        {"role": "user", "content": _messageController.text}
+        {"role": "user", "content": _requestMessage}
       ]
     });
 
     try {
-      final response =
-          await http.post(Uri.parse(url), headers: headers, body: body);
+      final response = await http.post(Uri.parse(url), headers: headers, body: body);
 
       if (response.statusCode == 200) {
         final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
-        final generatedMessage =
-            jsonResponse['choices'][0]['message']['content'];
+        final generatedMessage = jsonResponse['choices'][0]['message']['content'];
         dev.log('Response: $generatedMessage');
         setState(() {
           _responseMessage = generatedMessage; // Update with the AI response
+          _ttsService.speak(generatedMessage);
         });
       } else {
         dev.log('Error: ${response.statusCode} - ${response.body}');
