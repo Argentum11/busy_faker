@@ -1,7 +1,49 @@
 import 'package:flutter/material.dart';
+import 'fake_phone_call.dart';
 
 class ThemeSelectionPage extends StatelessWidget {
   const ThemeSelectionPage({super.key});
+
+  void _onAiConversationPressed() {
+    // 預留
+  }
+
+  void _onTheme1Pressed() {
+    // 預留
+  }
+
+  void _onTheme2Pressed(BuildContext context) {
+    //測試用
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const FakePhoneCallPage()),
+    );
+  }
+
+  void _onTheme3Pressed() {
+    // 預留
+  }
+
+  Widget _buildButton(String text, VoidCallback onPressed) {
+    return Expanded(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(
+            width: 200, // button 寬
+            height: 60, // button 高
+            child: ElevatedButton(
+              onPressed: onPressed,
+              child: Text(
+                text,
+                style: const TextStyle(fontSize: 18),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -9,70 +51,14 @@ class ThemeSelectionPage extends StatelessWidget {
       appBar: AppBar(title: const Text('Theme Selection Page')),
       body: Column(
         children: [
-          Expanded(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                  width: 200, // button寬
-                  height: 60, // button高
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    child: const Text('AI conversation',
-                        style: TextStyle(fontSize: 18)),
-                  ),
-                ),
-              ],
-            ),
+          _buildButton('AI conversation', _onAiConversationPressed),
+          _buildButton('Theme 1', _onTheme1Pressed),
+          _buildButton(
+            //測試用
+            'Theme 2',
+            () => _onTheme2Pressed(context),
           ),
-          Expanded(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                  width: 200,
-                  height: 60,
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    child:
-                        const Text('Theme 1', style: TextStyle(fontSize: 18)),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                  width: 200,
-                  height: 60,
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    child:
-                        const Text('Theme 2', style: TextStyle(fontSize: 18)),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                  width: 200,
-                  height: 60,
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    child:
-                        const Text('Theme 3', style: TextStyle(fontSize: 18)),
-                  ),
-                ),
-              ],
-            ),
-          ),
+          _buildButton('Theme 3', _onTheme3Pressed),
         ],
       ),
     );
