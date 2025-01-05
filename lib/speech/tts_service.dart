@@ -1,4 +1,5 @@
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:busy_faker/models/voice_profile.dart';
 import 'dart:developer' as dev;
 
 enum TtsState { playing, stopped }
@@ -19,7 +20,7 @@ class TtsService {
   
   void Function(TtsState)? onStateChanged;
 
-  Future<void> initialize() async {
+  Future<void> initialize(VoiceProfile voiceProfile) async {
     flutterTts = FlutterTts();
 
     // Set speaking language to Chinese
@@ -49,7 +50,7 @@ class TtsService {
       dev.log("error: $msg");
     });
 
-    await _setTtsConfiguration();
+    await _setTtsConfiguration(voiceProfile);
   }
 
   void _updateState(TtsState newState) {
@@ -57,10 +58,10 @@ class TtsService {
     onStateChanged?.call(newState);
   }
 
-  Future<void> _setTtsConfiguration() async {
+  Future<void> _setTtsConfiguration(VoiceProfile voiceProfile) async {
     await flutterTts.setVolume(1.0);
-    await flutterTts.setSpeechRate(0.5);
-    await flutterTts.setPitch(1.0);
+    await flutterTts.setSpeechRate(voiceProfile.rate);
+    await flutterTts.setPitch(voiceProfile.pitch);
   }
 
   List<String> _splitText(String text, {int maxLength = 300}) {

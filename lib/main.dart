@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'dart:developer' as dev;
 import 'package:busy_faker/speech/tts_service.dart';
+import 'package:busy_faker/models/voice_profile.dart';
 
 void main() {
   runApp(const BusyFaker());
@@ -139,7 +140,7 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   void _initializeTts() async {
-    await _ttsService.initialize();
+    await _ttsService.initialize(hybridVoice);
     _ttsService.onStateChanged = (TtsState newState) {
       setState(() {
         ttsState = newState;
