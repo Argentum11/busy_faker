@@ -72,9 +72,11 @@ class FakePhoneCallPageState extends State<FakePhoneCallPage> {
               ),
             ),
             const SizedBox(height: 20),
-            const CircleAvatar(
+            CircleAvatar(
               radius: 60,
-              // backgroundImage: AssetImage('assets/images/caller.jpg'),
+              backgroundImage: AssetImage(
+                widget.caller.imagePath,
+              ),
             ),
             const SizedBox(height: 20),
             Text(
@@ -173,9 +175,9 @@ class InCallPageState extends State<InCallPage> {
               ),
             ),
             const SizedBox(height: 20),
-            const CircleAvatar(
+            CircleAvatar(
               radius: 60,
-              // backgroundImage: AssetImage('assets/images/caller.jpg'),
+              backgroundImage: AssetImage(widget.caller.imagePath),
             ),
             const SizedBox(height: 20),
             Text(
