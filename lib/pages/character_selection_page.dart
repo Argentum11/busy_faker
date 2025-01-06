@@ -1,81 +1,89 @@
 import 'package:flutter/material.dart';
 import 'theme_selection_page.dart';
+import 'package:busy_faker/models/character.dart';
 
 class CharacterSelectionPage extends StatelessWidget {
   final int minutes;
   final int seconds;
 
-  const CharacterSelectionPage(
+  CharacterSelectionPage(
       {super.key, required this.minutes, required this.seconds});
 
-  void _navigateToThemeSelectionPage(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const ThemeSelectionPage()),
-    );
-  }
+  final List<Character> characters = [
+    Character(name: 'Character 1', imagePath: 'assets/images/character1.jpg'),
+    Character(name: 'Character 2', imagePath: 'assets/images/character2.jpg'),
+    Character(name: 'Character 3', imagePath: 'assets/images/character3.jpg'),
+    Character(name: 'Character 4', imagePath: 'assets/images/character4.jpg'),
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Character Selection Page')),
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          Expanded(
-            child: Row(
-              children: [
-                _buildCharacterWidget(
-                  'assets/images/character1.jpg',
-                  'Character 1',
-                  context,
-                ), //測試圖片，修改後記得到pubspec.yaml改assets，之後執行flutter pub get
-                _buildCharacterWidget(
-                  'assets/images/character2.jpg',
-                  'Character 2',
-                  context,
-                ),
-              ],
-            ),
+          CharacterRow(
+            leftCharacter: characters[0],
+            rightCharacter: characters[1],
           ),
-          Expanded(
-            child: Row(
-              children: [
-                _buildCharacterWidget(
-                  'assets/images/character3.jpg',
-                  'Character 3',
-                  context,
-                ),
-                _buildCharacterWidget(
-                  'assets/images/character4.jpg',
-                  'Character 4',
-                  context,
-                ),
-              ],
-            ),
-          ),
+          CharacterRow(
+            leftCharacter: characters[2],
+            rightCharacter: characters[3],
+          )
         ],
       ),
     );
   }
+}
 
-  Widget _buildCharacterWidget(
-      String imagePath, String buttonText, BuildContext context) {
-    return Expanded(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Image.asset(
-            imagePath,
-            height: 200,
-            width: 150,
-            fit: BoxFit.cover,
-          ),
-          ElevatedButton(
-            onPressed: () => _navigateToThemeSelectionPage(context),
-            child: Text(buttonText),
-          ),
-        ],
-      ),
+class CharacterRow extends StatelessWidget {
+  final Character leftCharacter, rightCharacter;
+  const CharacterRow(
+      {super.key, required this.leftCharacter, required this.rightCharacter});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        CharacterButton(
+          character: leftCharacter,
+          context: context,
+        ),
+        CharacterButton(
+          character: rightCharacter,
+          context: context,
+        ),
+      ],
+    );
+  }
+}
+
+class CharacterButton extends StatelessWidget {
+  final Character character;
+  final BuildContext context;
+  const CharacterButton(
+      {super.key, required this.character, required this.context});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Image.asset(character.imagePath,
+            height: 200, width: 150, fit: BoxFit.cover),
+        ElevatedButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const ThemeSelectionPage()),
+            );
+          },
+          child: Text(character.name),
+        ),
+      ],
     );
   }
 }
