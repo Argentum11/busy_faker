@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:numberpicker/numberpicker.dart';
-import 'character_selection_page.dart';
+import 'caller_selection_page.dart';
 
 class TimerSelectionPage extends StatefulWidget {
   const TimerSelectionPage({super.key});
@@ -17,7 +17,7 @@ class _TimerSelectionPageState extends State<TimerSelectionPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => CharacterSelectionPage(
+        builder: (context) => CallerSelectionPage(
           minutes: _minutes,
           seconds: _seconds,
         ),
