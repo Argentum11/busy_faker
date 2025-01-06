@@ -68,22 +68,21 @@ class CharacterButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Image.asset(character.imagePath,
-            height: 200, width: 150, fit: BoxFit.cover),
-        ElevatedButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const ThemeSelectionPage()),
-            );
-          },
-          child: Text(character.name),
-        ),
-      ],
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const ThemeSelectionPage()),
+        );
+      },
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset(character.imagePath,
+              height: 200, width: 150, fit: BoxFit.cover),
+          Text(character.name)
+        ],
+      ),
     );
   }
 }
