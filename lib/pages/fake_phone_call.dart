@@ -6,10 +6,10 @@ class FakePhoneCallPage extends StatefulWidget {
   const FakePhoneCallPage({super.key});
 
   @override
-  _FakePhoneCallPageState createState() => _FakePhoneCallPageState();
+  FakePhoneCallPageState createState() => FakePhoneCallPageState();
 }
 
-class _FakePhoneCallPageState extends State<FakePhoneCallPage> {
+class FakePhoneCallPageState extends State<FakePhoneCallPage> {
   late Timer _timer;
 
   void _startVibration() {
@@ -121,10 +121,10 @@ class InCallPage extends StatefulWidget {
   const InCallPage({super.key});
 
   @override
-  _InCallPageState createState() => _InCallPageState();
+  InCallPageState createState() => InCallPageState();
 }
 
-class _InCallPageState extends State<InCallPage> {
+class InCallPageState extends State<InCallPage> {
   late Timer _timer;
   int _callDuration = 0; // 通話秒數
 

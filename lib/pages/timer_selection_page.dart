@@ -6,10 +6,10 @@ class TimerSelectionPage extends StatefulWidget {
   const TimerSelectionPage({super.key});
 
   @override
-  _TimerSelectionPageState createState() => _TimerSelectionPageState();
+  TimerSelectionPageState createState() => TimerSelectionPageState();
 }
 
-class _TimerSelectionPageState extends State<TimerSelectionPage> {
+class TimerSelectionPageState extends State<TimerSelectionPage> {
   int _minutes = 0;
   int _seconds = 0;
 
