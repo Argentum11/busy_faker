@@ -14,8 +14,8 @@ class FakePhoneCallPage extends StatefulWidget {
 class FakePhoneCallPageState extends State<FakePhoneCallPage> {
   late Timer _timer;
 
-  void _startVibration() {
-    if (Vibration.hasVibrator() != null) {
+  void _startVibration() async {
+    if (await Vibration.hasVibrator() ?? false) {
       Vibration.vibrate(duration: 10000); // Vibrate for 10 seconds
     }
   }
