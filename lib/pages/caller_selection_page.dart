@@ -69,7 +69,9 @@ class CallerButton extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const ThemeSelectionPage()),
+          MaterialPageRoute(
+            builder: (context) => ThemeSelectionPage(caller: caller),
+          ),
         );
       },
       child: Column(

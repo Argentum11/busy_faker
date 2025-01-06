@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:busy_faker/models/caller.dart';
 import 'fake_phone_call.dart';
 
 class ThemeSelectionPage extends StatelessWidget {
-  const ThemeSelectionPage({super.key});
+  final Caller caller;
+  const ThemeSelectionPage({super.key, required this.caller});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Theme Selection Page')),
-      body: const Column(
+      body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          ThemeButton(theme: 'AI conversation'),
-          ThemeButton(theme: 'Theme 1'),
-          ThemeButton(theme: 'Theme 2'),
-          ThemeButton(theme: 'Theme 3'),
+          ThemeButton(theme: 'AI conversation', caller: caller),
+          ThemeButton(theme: 'Theme 1', caller: caller),
+          ThemeButton(theme: 'Theme 2', caller: caller),
+          ThemeButton(theme: 'Theme 3', caller: caller),
         ],
       ),
     );
@@ -23,8 +25,9 @@ class ThemeSelectionPage extends StatelessWidget {
 }
 
 class ThemeButton extends StatelessWidget {
+  final Caller caller;
   final String theme;
-  const ThemeButton({super.key, required this.theme});
+  const ThemeButton({super.key, required this.theme, required this.caller});
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +36,10 @@ class ThemeButton extends StatelessWidget {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const FakePhoneCallPage()),
+            MaterialPageRoute(
+                builder: (context) => FakePhoneCallPage(
+                      caller: caller,
+                    )),
           );
         },
         style: ElevatedButton.styleFrom(

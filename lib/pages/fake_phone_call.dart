@@ -1,9 +1,11 @@
+import 'package:busy_faker/models/caller.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:vibration/vibration.dart';
 
 class FakePhoneCallPage extends StatefulWidget {
-  const FakePhoneCallPage({super.key});
+  final Caller caller;
+  const FakePhoneCallPage({super.key, required this.caller});
 
   @override
   FakePhoneCallPageState createState() => FakePhoneCallPageState();
@@ -35,7 +37,7 @@ class FakePhoneCallPageState extends State<FakePhoneCallPage> {
     // 導向 "通話中" 頁面
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => const InCallPage()),
+      MaterialPageRoute(builder: (context) => InCallPage(caller: widget.caller)),
     );
   }
 
@@ -75,9 +77,9 @@ class FakePhoneCallPageState extends State<FakePhoneCallPage> {
               // backgroundImage: AssetImage('assets/images/caller.jpg'),
             ),
             const SizedBox(height: 20),
-            const Text(
-              'John Doe',
-              style: TextStyle(
+            Text(
+              widget.caller.name,
+              style: const TextStyle(
                 color: Colors.white,
                 fontSize: 18,
               ),
@@ -118,7 +120,8 @@ class FakePhoneCallPageState extends State<FakePhoneCallPage> {
 // ===============================
 
 class InCallPage extends StatefulWidget {
-  const InCallPage({super.key});
+  final Caller caller;
+  const InCallPage({super.key, required this.caller});
 
   @override
   InCallPageState createState() => InCallPageState();
@@ -175,9 +178,9 @@ class InCallPageState extends State<InCallPage> {
               // backgroundImage: AssetImage('assets/images/caller.jpg'),
             ),
             const SizedBox(height: 20),
-            const Text(
-              'John Doe',
-              style: TextStyle(
+            Text(
+              widget.caller.name,
+              style: const TextStyle(
                 color: Colors.white,
                 fontSize: 18,
               ),
