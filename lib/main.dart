@@ -1,11 +1,9 @@
-import 'package:busy_faker/api_key.dart';
 import 'package:flutter/material.dart';
 import 'package:numberpicker/numberpicker.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'dart:developer' as dev;
 import 'package:busy_faker/speech/tts_service.dart';
 import 'package:busy_faker/models/voice_profile.dart';
+import 'package:busy_faker/chat_gpt_service.dart';
 
 void main() {
   runApp(const BusyFaker());
@@ -57,7 +55,7 @@ class _TimerSelectionPageState extends State<TimerSelectionPage> {
           TextButton(
               onPressed: () => Navigator.pop(context), child: const Text("OK"))
         ],
-        ),
+      ),
     );
   }
 
@@ -133,6 +131,8 @@ class _ChatPageState extends State<ChatPage> {
   final TtsService _ttsService = TtsService();
   TtsState ttsState = TtsState.stopped;
 
+  final ChatGPTService _chatGPTService = ChatGPTService();
+
   @override
   void initState() {
     super.initState();
@@ -156,34 +156,10 @@ class _ChatPageState extends State<ChatPage> {
       _responseMessage = 'Processing...';
     });
 
-    const url = 'https://api.openai.com/v1/chat/completions';
-    final headers = {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $gptApiKey',
-    };
-    final body = jsonEncode({
-      "model": "gpt-4o-mini",
-      "store": true,
-      "messages": [
-        {"role": "system", "content": "Respond in zh-tw"},
-        {"role": "user", "content": _requestMessage}
-      ]
-    });
-
     try {
-      final response = await http.post(Uri.parse(url), headers: headers, body: body);
-
-      if (response.statusCode == 200) {
-        final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
-        final generatedMessage = jsonResponse['choices'][0]['message']['content'];
-        dev.log('Response: $generatedMessage');
-        setState(() {
-          _responseMessage = generatedMessage; // Update with the AI response
-          _ttsService.speak(generatedMessage);
-        });
-      } else {
-        dev.log('Error: ${response.statusCode} - ${response.body}');
-      }
+      final response = await _chatGPTService.getChatResponse(_requestMessage);
+      _responseMessage = response;
+      _ttsService.speak(_responseMessage);
     } catch (e) {
       dev.log('Exception: $e');
     }
