@@ -19,7 +19,7 @@ class CharacterSelectionPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Character Selection Page')),
+      appBar: AppBar(title: const Text('Select a character')),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
