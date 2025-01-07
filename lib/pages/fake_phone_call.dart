@@ -205,12 +205,17 @@ class InCallPageState extends State<InCallPage> {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
-      //backgroundColor: Colors.black,
+      backgroundColor: Colors.black,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            SizedBox(
+              height: screenHeight * 0.1,
+            ),
             const Text(
               'In Call',
               style: TextStyle(
@@ -256,7 +261,10 @@ class InCallPageState extends State<InCallPage> {
               child: SingleChildScrollView(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Text(_responseMessage),
+                  child: Text(
+                    _responseMessage,
+                    style: const TextStyle(color: Colors.white),
+                  ),
                 ),
               ),
             ),
@@ -269,6 +277,9 @@ class InCallPageState extends State<InCallPage> {
               onPressed: _endCall, // 掛斷時關閉頁面
               child: const Icon(Icons.call_end, color: Colors.white),
             ),
+            SizedBox(
+              height: screenHeight * 0.1,
+            )
           ],
         ),
       ),
