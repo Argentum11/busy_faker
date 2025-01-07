@@ -39,6 +39,7 @@ dependencies:
   numberpicker: ^2.1.2
   vibration: ^1.7.3
   flutter_tts: ^4.2.1
+  speech_to_text: ^7.0.0
 
 dev_dependencies:
   flutter_test:
