@@ -2,6 +2,9 @@ import 'package:busy_faker/models/caller.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:vibration/vibration.dart';
+import 'dart:developer' as dev;
+import 'package:busy_faker/speech/tts_service.dart';
+import 'package:busy_faker/chat_gpt_service.dart';
 
 class FakePhoneCallPage extends StatefulWidget {
   final Caller caller;
@@ -18,7 +21,8 @@ class FakePhoneCallPageState extends State<FakePhoneCallPage> {
 
   void _startVibration() async {
     if (await Vibration.hasVibrator() ?? false) {
-      Vibration.vibrate(duration: ringDuration * 1000); // Vibrate for 10 seconds
+      Vibration.vibrate(
+          duration: ringDuration * 1000); // Vibrate for 10 seconds
     }
   }
 
@@ -39,7 +43,8 @@ class FakePhoneCallPageState extends State<FakePhoneCallPage> {
     // 導向 "通話中" 頁面
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => InCallPage(caller: widget.caller)),
+      MaterialPageRoute(
+          builder: (context) => InCallPage(caller: widget.caller)),
     );
   }
 
@@ -135,6 +140,16 @@ class InCallPageState extends State<InCallPage> {
   late Timer _timer;
   int _callDuration = 0; // 通話秒數
 
+  final TextEditingController _messageController = TextEditingController();
+  String _requestMessage = '';
+  String _responseMessage = '';
+
+  // text to speech
+  final TtsService _ttsService = TtsService();
+  TtsState ttsState = TtsState.stopped;
+
+  final ChatGPTService _chatGPTService = ChatGPTService();
+
   void _startCallTimer() {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
@@ -152,18 +167,46 @@ class InCallPageState extends State<InCallPage> {
   void initState() {
     super.initState();
     _startCallTimer();
+    _initializeTts();
   }
 
   @override
   void dispose() {
     _timer.cancel();
+    _ttsService.stop();
     super.dispose();
+  }
+
+  void _initializeTts() async {
+    await _ttsService.initialize(widget.caller.voiceProfile);
+    _ttsService.onStateChanged = (TtsState newState) {
+      setState(() {
+        ttsState = newState;
+      });
+    };
+  }
+
+  Future<void> _saveMessage() async {
+    _ttsService.stop();
+
+    setState(() {
+      _requestMessage = _messageController.text;
+      _responseMessage = 'Processing...';
+    });
+
+    try {
+      final response = await _chatGPTService.getChatResponse(_requestMessage);
+      _responseMessage = response;
+      _ttsService.speak(_responseMessage);
+    } catch (e) {
+      dev.log('Exception: $e');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      //backgroundColor: Colors.black,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -198,6 +241,25 @@ class InCallPageState extends State<InCallPage> {
               ),
             ),
             const SizedBox(height: 40),
+            TextField(
+              controller: _messageController,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Enter your message',
+              ),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            TextButton(onPressed: _saveMessage, child: const Text("Chat")),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Text(_responseMessage),
+                ),
+              ),
+            ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,

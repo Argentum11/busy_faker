@@ -9,3 +9,13 @@ A new Flutter project
 ```bash
 flutter pub get
 ```
+
+### GPT API key
+
+1. Copy the file
+
+```bash
+cp lib/api_key_template.dart lib/api_key.dart
+```
+
+2. Enter your GPT API key in lib/api_key.dart

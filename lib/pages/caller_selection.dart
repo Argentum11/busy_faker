@@ -6,14 +6,8 @@ class CallerSelectionPage extends StatelessWidget {
   final int minutes;
   final int seconds;
 
-  CallerSelectionPage({super.key, required this.minutes, required this.seconds});
-
-  final List<Caller> callers = [
-    Caller(name: 'Character 1', imagePath: 'assets/images/character1.jpg'),
-    Caller(name: 'Character 2', imagePath: 'assets/images/character2.jpg'),
-    Caller(name: 'Character 3', imagePath: 'assets/images/character3.jpg'),
-    Caller(name: 'Character 4', imagePath: 'assets/images/character4.jpg'),
-  ];
+  const CallerSelectionPage(
+      {super.key, required this.minutes, required this.seconds});
 
   @override
   Widget build(BuildContext context) {
@@ -23,12 +17,12 @@ class CallerSelectionPage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           CallerRow(
-            leftCaller: callers[0],
-            rightCaller: callers[1],
+            leftCaller: heMo,
+            rightCaller: qingYang,
           ),
           CallerRow(
-            leftCaller: callers[2],
-            rightCaller: callers[3],
+            leftCaller: pingXin,
+            rightCaller: miaoGe,
           )
         ],
       ),
@@ -38,7 +32,8 @@ class CallerSelectionPage extends StatelessWidget {
 
 class CallerRow extends StatelessWidget {
   final Caller leftCaller, rightCaller;
-  const CallerRow({super.key, required this.leftCaller, required this.rightCaller});
+  const CallerRow(
+      {super.key, required this.leftCaller, required this.rightCaller});
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +71,11 @@ class CallerButton extends StatelessWidget {
       },
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [Image.asset(caller.imagePath, height: 200, width: 150, fit: BoxFit.cover), Text(caller.name)],
+        children: [
+          Image.asset(caller.imagePath,
+              height: 200, width: 150, fit: BoxFit.cover),
+          Text(caller.name)
+        ],
       ),
     );
   }
