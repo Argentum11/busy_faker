@@ -5,6 +5,8 @@ import 'package:vibration/vibration.dart';
 import 'dart:developer' as dev;
 import 'package:busy_faker/speech/tts_service.dart';
 import 'package:busy_faker/chat_gpt_service.dart';
+import 'package:speech_to_text/speech_recognition_result.dart';
+import 'package:speech_to_text/speech_to_text.dart';
 
 class FakePhoneCallPage extends StatefulWidget {
   final Caller caller;
@@ -21,8 +23,7 @@ class FakePhoneCallPageState extends State<FakePhoneCallPage> {
 
   void _startVibration() async {
     if (await Vibration.hasVibrator() ?? false) {
-      Vibration.vibrate(
-          duration: ringDuration * 1000); // Vibrate for 10 seconds
+      Vibration.vibrate(duration: ringDuration * 1000); // Vibrate for 10 seconds
     }
   }
 
@@ -43,8 +44,7 @@ class FakePhoneCallPageState extends State<FakePhoneCallPage> {
     // 導向 "通話中" 頁面
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(
-          builder: (context) => InCallPage(caller: widget.caller)),
+      MaterialPageRoute(builder: (context) => InCallPage(caller: widget.caller)),
     );
   }
 
@@ -143,12 +143,17 @@ class InCallPageState extends State<InCallPage> {
   final TextEditingController _messageController = TextEditingController();
   String _requestMessage = '';
   String _responseMessage = '';
+  String _lastWords = '';
 
   // text to speech
   final TtsService _ttsService = TtsService();
   TtsState ttsState = TtsState.stopped;
 
   final ChatGPTService _chatGPTService = ChatGPTService();
+
+  // speech to text
+  final SpeechToText _speechToText = SpeechToText();
+  bool _speechEnabled = false;
 
   void _startCallTimer() {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -168,6 +173,7 @@ class InCallPageState extends State<InCallPage> {
     super.initState();
     _startCallTimer();
     _initializeTts();
+    _initSpeechToText();
   }
 
   @override
@@ -186,11 +192,39 @@ class InCallPageState extends State<InCallPage> {
     };
   }
 
+  void _initSpeechToText() async {
+    _speechEnabled = await _speechToText.initialize();
+    setState(() {});
+  }
+
+  void _startListening() async {
+    await _speechToText.listen(onResult: _onSpeechResult);
+    setState(() {});
+  }
+
+  /// Manually stop the active speech recognition session
+  /// Note that there are also timeouts that each platform enforces
+  /// and the SpeechToText plugin supports setting timeouts on the
+  /// listen method.
+  void _stopListening() async {
+    await _speechToText.stop();
+    setState(() {});
+  }
+
+  /// This is the callback that the SpeechToText plugin calls when
+  /// the platform returns recognized words.
+  void _onSpeechResult(SpeechRecognitionResult result) {
+    setState(() {
+      _lastWords = result.recognizedWords;
+      _requestMessage = _lastWords;
+    });
+  }
+
   Future<void> _saveMessage() async {
     _ttsService.stop();
 
     setState(() {
-      _requestMessage = _messageController.text;
+      // _requestMessage = _messageController.text;
       _responseMessage = 'Processing...';
     });
 
@@ -262,11 +296,32 @@ class InCallPageState extends State<InCallPage> {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: Text(
-                    _responseMessage,
+                    _lastWords,
                     style: const TextStyle(color: Colors.white),
                   ),
                 ),
               ),
+            ),
+            Text(
+              // If listening is active show the recognized words
+              _speechToText.isListening
+                  // ignore: unnecessary_string_interpolations
+                  ? '$_lastWords'
+                  // If listening isn't active but could be tell the user
+                  // how to start it, otherwise indicate that speech
+                  // recognition is not yet ready or not supported on
+                  // the target device
+                  : _speechEnabled
+                      ? 'Tap the microphone to start listening...'
+                      : 'Speech not available',
+              style: const TextStyle(color: Colors.white),
+            ),
+            FloatingActionButton(
+              onPressed:
+                  // If not yet listening for speech start, otherwise stop
+                  _speechToText.isNotListening ? _startListening : _stopListening,
+              tooltip: 'Listen',
+              child: Icon(_speechToText.isNotListening ? Icons.mic_off : Icons.mic),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
