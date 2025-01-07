@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'pages/timer_selection_page.dart';
+import 'pages/timer_selection.dart';
 
 void main() {
   runApp(const BusyFaker());
