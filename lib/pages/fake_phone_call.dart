@@ -215,7 +215,7 @@ class InCallPageState extends State<InCallPage> {
   @override
   void initState() {
     super.initState();
-    _chatGPTService = ChatGPTService(command:widget.chatTheme.command);
+    _chatGPTService = ChatGPTService(command: widget.chatTheme.command);
     _currentChatRecord = ChatRecord(
       caller: widget.caller.name,
       topic: widget.chatTheme.name, // You can customize the topic
@@ -266,6 +266,9 @@ class InCallPageState extends State<InCallPage> {
     setState(() {
       _lastWords = result.recognizedWords;
       _requestMessage = _lastWords;
+      if (!_speechToText.isListening && _requestMessage.trim().isNotEmpty) {
+        _saveMessage();
+      }
     });
   }
 
