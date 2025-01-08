@@ -14,12 +14,12 @@ class TimerSelectionPageState extends State<TimerSelectionPage> {
   int _seconds = 0;
 
   void _navigateToCharacterSelectionPage() {
+    int callDelay = _minutes * 60 + _seconds;
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => CallerSelectionPage(
-          minutes: _minutes,
-          seconds: _seconds,
+          callDelay: callDelay,
         ),
       ),
     );

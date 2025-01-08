@@ -5,10 +5,17 @@ import 'package:vibration/vibration.dart';
 import 'dart:developer' as dev;
 import 'package:busy_faker/speech/tts_service.dart';
 import 'package:busy_faker/chat_gpt_service.dart';
+import 'package:speech_to_text/speech_recognition_result.dart';
+import 'package:speech_to_text/speech_to_text.dart';
+import 'package:busy_faker/services/chat.dart';
+import 'package:busy_faker/models/chat_message.dart';
+import 'package:busy_faker/models/chat_theme.dart';
 
 class FakePhoneCallPage extends StatefulWidget {
   final Caller caller;
-  const FakePhoneCallPage({super.key, required this.caller});
+  final int callDelay;
+  final ChatTheme chatTheme;
+  const FakePhoneCallPage({super.key, required this.caller, required this.callDelay, required this.chatTheme});
 
   @override
   FakePhoneCallPageState createState() => FakePhoneCallPageState();
@@ -18,11 +25,12 @@ class FakePhoneCallPageState extends State<FakePhoneCallPage> {
   late Timer _timer;
 
   final int ringDuration = 10;
+  int _delayTimeRemaining = 0;
+  bool _isDelaying = true;
 
   void _startVibration() async {
     if (await Vibration.hasVibrator() ?? false) {
-      Vibration.vibrate(
-          duration: ringDuration * 1000); // Vibrate for 10 seconds
+      Vibration.vibrate(duration: ringDuration * 1000); // Vibrate for 10 seconds
     }
   }
 
@@ -44,15 +52,35 @@ class FakePhoneCallPageState extends State<FakePhoneCallPage> {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-          builder: (context) => InCallPage(caller: widget.caller)),
+          builder: (context) => InCallPage(
+                caller: widget.caller,
+                chatTheme: widget.chatTheme,
+              )),
     );
+  }
+
+  Future<void> _startCall() async {
+    _delayTimeRemaining = widget.callDelay;
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_delayTimeRemaining > 0) {
+        setState(() {
+          _delayTimeRemaining--;
+        });
+      } else {
+        _timer.cancel();
+        setState(() {
+          _isDelaying = false;
+        });
+        _startVibration();
+        _timer = Timer(Duration(seconds: ringDuration), _endCall);
+      }
+    });
   }
 
   @override
   void initState() {
     super.initState();
-    _startVibration();
-    _timer = Timer(Duration(seconds: ringDuration), _endCall);
+    _startCall();
   }
 
   @override
@@ -64,6 +92,16 @@ class FakePhoneCallPageState extends State<FakePhoneCallPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (_isDelaying) {
+      return Scaffold(
+        backgroundColor: Colors.black,
+        body: Center(
+          child: CircularProgressIndicator(
+              color: Colors.white, value: widget.callDelay == 0 ? 0 : (widget.callDelay - _delayTimeRemaining) / widget.callDelay),
+        ),
+      );
+    }
+
     return Scaffold(
       backgroundColor: Colors.black,
       body: Center(
@@ -130,7 +168,8 @@ class FakePhoneCallPageState extends State<FakePhoneCallPage> {
 
 class InCallPage extends StatefulWidget {
   final Caller caller;
-  const InCallPage({super.key, required this.caller});
+  final ChatTheme chatTheme;
+  const InCallPage({super.key, required this.caller, required this.chatTheme});
 
   @override
   InCallPageState createState() => InCallPageState();
@@ -143,12 +182,21 @@ class InCallPageState extends State<InCallPage> {
   final TextEditingController _messageController = TextEditingController();
   String _requestMessage = '';
   String _responseMessage = '';
+  String _lastWords = '';
 
   // text to speech
   final TtsService _ttsService = TtsService();
   TtsState ttsState = TtsState.stopped;
 
-  final ChatGPTService _chatGPTService = ChatGPTService();
+  late final ChatGPTService _chatGPTService;
+
+  // speech to text
+  final SpeechToText _speechToText = SpeechToText();
+  bool _speechEnabled = false;
+
+  // Add ChatRecord reference
+  late ChatRecord _currentChatRecord;
+  final ChatService _chatService = ChatService();
 
   void _startCallTimer() {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -160,14 +208,21 @@ class InCallPageState extends State<InCallPage> {
 
   void _endCall() {
     _timer.cancel();
+    _chatService.addRecord(_currentChatRecord);
     Navigator.pop(context); // 直接關閉頁面
   }
 
   @override
   void initState() {
     super.initState();
+    _chatGPTService = ChatGPTService(command:widget.chatTheme.command);
+    _currentChatRecord = ChatRecord(
+      caller: widget.caller.name,
+      topic: widget.chatTheme.name, // You can customize the topic
+    );
     _startCallTimer();
     _initializeTts();
+    _initSpeechToText();
   }
 
   @override
@@ -186,11 +241,39 @@ class InCallPageState extends State<InCallPage> {
     };
   }
 
+  void _initSpeechToText() async {
+    _speechEnabled = await _speechToText.initialize();
+    setState(() {});
+  }
+
+  void _startListening() async {
+    await _speechToText.listen(onResult: _onSpeechResult);
+    setState(() {});
+  }
+
+  /// Manually stop the active speech recognition session
+  /// Note that there are also timeouts that each platform enforces
+  /// and the SpeechToText plugin supports setting timeouts on the
+  /// listen method.
+  void _stopListening() async {
+    await _speechToText.stop();
+    setState(() {});
+  }
+
+  /// This is the callback that the SpeechToText plugin calls when
+  /// the platform returns recognized words.
+  void _onSpeechResult(SpeechRecognitionResult result) {
+    setState(() {
+      _lastWords = result.recognizedWords;
+      _requestMessage = _lastWords;
+    });
+  }
+
   Future<void> _saveMessage() async {
     _ttsService.stop();
 
     setState(() {
-      _requestMessage = _messageController.text;
+      // _requestMessage = _messageController.text;
       _responseMessage = 'Processing...';
     });
 
@@ -198,6 +281,12 @@ class InCallPageState extends State<InCallPage> {
       final response = await _chatGPTService.getChatResponse(_requestMessage);
       _responseMessage = response;
       _ttsService.speak(_responseMessage);
+      _currentChatRecord.messages.add(
+        ChatMessage(
+          request: _requestMessage,
+          response: _responseMessage,
+        ),
+      );
     } catch (e) {
       dev.log('Exception: $e');
     }
@@ -205,12 +294,17 @@ class InCallPageState extends State<InCallPage> {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
-      //backgroundColor: Colors.black,
+      backgroundColor: Colors.black,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            SizedBox(
+              height: screenHeight * 0.1,
+            ),
             const Text(
               'In Call',
               style: TextStyle(
@@ -256,9 +350,33 @@ class InCallPageState extends State<InCallPage> {
               child: SingleChildScrollView(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Text(_responseMessage),
+                  child: Text(
+                    _lastWords,
+                    style: const TextStyle(color: Colors.white),
+                  ),
                 ),
               ),
+            ),
+            Text(
+              // If listening is active show the recognized words
+              _speechToText.isListening
+                  // ignore: unnecessary_string_interpolations
+                  ? '$_lastWords'
+                  // If listening isn't active but could be tell the user
+                  // how to start it, otherwise indicate that speech
+                  // recognition is not yet ready or not supported on
+                  // the target device
+                  : _speechEnabled
+                      ? 'Tap the microphone to start listening...'
+                      : 'Speech not available',
+              style: const TextStyle(color: Colors.white),
+            ),
+            FloatingActionButton(
+              onPressed:
+                  // If not yet listening for speech start, otherwise stop
+                  _speechToText.isNotListening ? _startListening : _stopListening,
+              tooltip: 'Listen',
+              child: Icon(_speechToText.isNotListening ? Icons.mic_off : Icons.mic),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
@@ -269,6 +387,9 @@ class InCallPageState extends State<InCallPage> {
               onPressed: _endCall, // 掛斷時關閉頁面
               child: const Icon(Icons.call_end, color: Colors.white),
             ),
+            SizedBox(
+              height: screenHeight * 0.1,
+            )
           ],
         ),
       ),

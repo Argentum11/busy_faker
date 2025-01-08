@@ -6,8 +6,9 @@ import 'package:busy_faker/api_key.dart';
 class ChatGPTService {
   static const String _baseUrl = 'https://api.openai.com/v1/chat/completions';
   final String apiKey = gptApiKey;
+  final String command;
 
-  ChatGPTService();
+  ChatGPTService({required this.command});
 
   Future<String> getChatResponse(String message) async {
     final headers = {
@@ -20,6 +21,7 @@ class ChatGPTService {
       "store": true,
       "messages": [
         {"role": "system", "content": "Respond in zh-tw"},
+        {"role": "system", "content": command},
         {"role": "user", "content": message}
       ]
     });
