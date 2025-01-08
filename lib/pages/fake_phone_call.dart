@@ -179,7 +179,6 @@ class InCallPageState extends State<InCallPage> {
   late Timer _timer;
   int _callDuration = 0; // 通話秒數
 
-  final TextEditingController _messageController = TextEditingController();
   String _requestMessage = '';
   String _responseMessage = '';
   String _lastWords = '';
@@ -338,13 +337,6 @@ class InCallPageState extends State<InCallPage> {
               ),
             ),
             const SizedBox(height: 40),
-            TextField(
-              controller: _messageController,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Enter your message',
-              ),
-            ),
             const SizedBox(
               height: 10,
             ),
