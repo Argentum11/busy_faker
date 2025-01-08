@@ -7,6 +7,8 @@ import 'package:busy_faker/speech/tts_service.dart';
 import 'package:busy_faker/chat_gpt_service.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
+import 'package:busy_faker/services/chat.dart';
+import 'package:busy_faker/models/chat_message.dart';
 
 class FakePhoneCallPage extends StatefulWidget {
   final Caller caller;
@@ -185,6 +187,10 @@ class InCallPageState extends State<InCallPage> {
   final SpeechToText _speechToText = SpeechToText();
   bool _speechEnabled = false;
 
+  // Add ChatRecord reference
+  late ChatRecord _currentChatRecord;
+  final ChatService _chatService = ChatService();
+
   void _startCallTimer() {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
@@ -195,12 +201,17 @@ class InCallPageState extends State<InCallPage> {
 
   void _endCall() {
     _timer.cancel();
+    _chatService.addRecord(_currentChatRecord);
     Navigator.pop(context); // 直接關閉頁面
   }
 
   @override
   void initState() {
     super.initState();
+    _currentChatRecord = ChatRecord(
+      caller: widget.caller.name,
+      topic: 'Call at ${DateTime.now()}', // You can customize the topic
+    );
     _startCallTimer();
     _initializeTts();
     _initSpeechToText();
@@ -262,6 +273,12 @@ class InCallPageState extends State<InCallPage> {
       final response = await _chatGPTService.getChatResponse(_requestMessage);
       _responseMessage = response;
       _ttsService.speak(_responseMessage);
+      _currentChatRecord.messages.add(
+        ChatMessage(
+          request: _requestMessage,
+          response: _responseMessage,
+        ),
+      );
     } catch (e) {
       dev.log('Exception: $e');
     }
