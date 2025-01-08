@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:busy_faker/models/caller.dart';
 import 'fake_phone_call.dart';
+import 'package:busy_faker/models/chat_theme.dart';
 
 class ThemeSelectionPage extends StatelessWidget {
   final Caller caller;
@@ -15,10 +16,10 @@ class ThemeSelectionPage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          ThemeButton(theme: 'AI conversation', caller: caller, callDelay: callDelay),
-          ThemeButton(theme: 'Theme 1', caller: caller, callDelay: callDelay),
-          ThemeButton(theme: 'Theme 2', caller: caller, callDelay: callDelay),
-          ThemeButton(theme: 'Theme 3', caller: caller, callDelay: callDelay),
+          ThemeButton(chatTheme: ai, caller: caller, callDelay: callDelay),
+          ThemeButton(chatTheme: emergencyWork, caller: caller, callDelay: callDelay),
+          ThemeButton(chatTheme: socialRelief, caller: caller, callDelay: callDelay),
+          ThemeButton(chatTheme: nightCompanionship, caller: caller, callDelay: callDelay),
         ],
       ),
     );
@@ -27,9 +28,9 @@ class ThemeSelectionPage extends StatelessWidget {
 
 class ThemeButton extends StatelessWidget {
   final Caller caller;
-  final String theme;
+  final ChatTheme chatTheme;
   final int callDelay;
-  const ThemeButton({super.key, required this.theme, required this.caller, required this.callDelay});
+  const ThemeButton({super.key, required this.chatTheme, required this.caller, required this.callDelay});
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +40,11 @@ class ThemeButton extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => FakePhoneCallPage(caller: caller, callDelay: callDelay),
+              builder: (context) => FakePhoneCallPage(
+                caller: caller,
+                callDelay: callDelay,
+                chatTheme: chatTheme,
+              ),
             ),
           );
         },
@@ -47,7 +52,7 @@ class ThemeButton extends StatelessWidget {
           minimumSize: const Size(60, 0),
         ),
         child: Text(
-          theme,
+          chatTheme.name,
           style: const TextStyle(fontSize: 18),
         ),
       ),

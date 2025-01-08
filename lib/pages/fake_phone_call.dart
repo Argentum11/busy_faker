@@ -9,11 +9,13 @@ import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:busy_faker/services/chat.dart';
 import 'package:busy_faker/models/chat_message.dart';
+import 'package:busy_faker/models/chat_theme.dart';
 
 class FakePhoneCallPage extends StatefulWidget {
   final Caller caller;
   final int callDelay;
-  const FakePhoneCallPage({super.key, required this.caller, required this.callDelay});
+  final ChatTheme chatTheme;
+  const FakePhoneCallPage({super.key, required this.caller, required this.callDelay, required this.chatTheme});
 
   @override
   FakePhoneCallPageState createState() => FakePhoneCallPageState();
@@ -49,7 +51,11 @@ class FakePhoneCallPageState extends State<FakePhoneCallPage> {
     // 導向 "通話中" 頁面
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => InCallPage(caller: widget.caller)),
+      MaterialPageRoute(
+          builder: (context) => InCallPage(
+                caller: widget.caller,
+                chatTheme: widget.chatTheme,
+              )),
     );
   }
 
@@ -162,7 +168,8 @@ class FakePhoneCallPageState extends State<FakePhoneCallPage> {
 
 class InCallPage extends StatefulWidget {
   final Caller caller;
-  const InCallPage({super.key, required this.caller});
+  final ChatTheme chatTheme;
+  const InCallPage({super.key, required this.caller, required this.chatTheme});
 
   @override
   InCallPageState createState() => InCallPageState();
@@ -181,7 +188,7 @@ class InCallPageState extends State<InCallPage> {
   final TtsService _ttsService = TtsService();
   TtsState ttsState = TtsState.stopped;
 
-  final ChatGPTService _chatGPTService = ChatGPTService();
+  late final ChatGPTService _chatGPTService;
 
   // speech to text
   final SpeechToText _speechToText = SpeechToText();
@@ -208,9 +215,10 @@ class InCallPageState extends State<InCallPage> {
   @override
   void initState() {
     super.initState();
+    _chatGPTService = ChatGPTService(command:widget.chatTheme.command);
     _currentChatRecord = ChatRecord(
       caller: widget.caller.name,
-      topic: 'Call at ${DateTime.now()}', // You can customize the topic
+      topic: widget.chatTheme.name, // You can customize the topic
     );
     _startCallTimer();
     _initializeTts();
