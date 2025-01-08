@@ -4,7 +4,8 @@ import 'fake_phone_call.dart';
 
 class ThemeSelectionPage extends StatelessWidget {
   final Caller caller;
-  const ThemeSelectionPage({super.key, required this.caller});
+  final int callDelay;
+  const ThemeSelectionPage({super.key, required this.caller, required this.callDelay});
 
   @override
   Widget build(BuildContext context) {
@@ -14,10 +15,10 @@ class ThemeSelectionPage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          ThemeButton(theme: 'AI conversation', caller: caller),
-          ThemeButton(theme: 'Theme 1', caller: caller),
-          ThemeButton(theme: 'Theme 2', caller: caller),
-          ThemeButton(theme: 'Theme 3', caller: caller),
+          ThemeButton(theme: 'AI conversation', caller: caller, callDelay: callDelay),
+          ThemeButton(theme: 'Theme 1', caller: caller, callDelay: callDelay),
+          ThemeButton(theme: 'Theme 2', caller: caller, callDelay: callDelay),
+          ThemeButton(theme: 'Theme 3', caller: caller, callDelay: callDelay),
         ],
       ),
     );
@@ -27,7 +28,8 @@ class ThemeSelectionPage extends StatelessWidget {
 class ThemeButton extends StatelessWidget {
   final Caller caller;
   final String theme;
-  const ThemeButton({super.key, required this.theme, required this.caller});
+  final int callDelay;
+  const ThemeButton({super.key, required this.theme, required this.caller, required this.callDelay});
 
   @override
   Widget build(BuildContext context) {
@@ -37,9 +39,8 @@ class ThemeButton extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => FakePhoneCallPage(
-                      caller: caller,
-                    )),
+              builder: (context) => FakePhoneCallPage(caller: caller, callDelay: callDelay),
+            ),
           );
         },
         style: ElevatedButton.styleFrom(

@@ -10,7 +10,8 @@ import 'package:speech_to_text/speech_to_text.dart';
 
 class FakePhoneCallPage extends StatefulWidget {
   final Caller caller;
-  const FakePhoneCallPage({super.key, required this.caller});
+  final int callDelay;
+  const FakePhoneCallPage({super.key, required this.caller, required this.callDelay});
 
   @override
   FakePhoneCallPageState createState() => FakePhoneCallPageState();
@@ -20,6 +21,8 @@ class FakePhoneCallPageState extends State<FakePhoneCallPage> {
   late Timer _timer;
 
   final int ringDuration = 10;
+  int _delayTimeRemaining = 0;
+  bool _isDelaying = true;
 
   void _startVibration() async {
     if (await Vibration.hasVibrator() ?? false) {
@@ -48,11 +51,28 @@ class FakePhoneCallPageState extends State<FakePhoneCallPage> {
     );
   }
 
+  Future<void> _startCall() async {
+    _delayTimeRemaining = widget.callDelay;
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_delayTimeRemaining > 0) {
+        setState(() {
+          _delayTimeRemaining--;
+        });
+      } else {
+        _timer.cancel();
+        setState(() {
+          _isDelaying = false;
+        });
+        _startVibration();
+        _timer = Timer(Duration(seconds: ringDuration), _endCall);
+      }
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-    _startVibration();
-    _timer = Timer(Duration(seconds: ringDuration), _endCall);
+    _startCall();
   }
 
   @override
@@ -64,6 +84,15 @@ class FakePhoneCallPageState extends State<FakePhoneCallPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (_isDelaying) {
+      return Scaffold(
+        backgroundColor: Colors.black,
+        body: Center(
+          child: CircularProgressIndicator(color: Colors.white, value: (widget.callDelay - _delayTimeRemaining) / widget.callDelay),
+        ),
+      );
+    }
+
     return Scaffold(
       backgroundColor: Colors.black,
       body: Center(

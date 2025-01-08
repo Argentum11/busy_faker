@@ -3,11 +3,9 @@ import 'theme_selection.dart';
 import 'package:busy_faker/models/caller.dart';
 
 class CallerSelectionPage extends StatelessWidget {
-  final int minutes;
-  final int seconds;
+  final int callDelay;
 
-  const CallerSelectionPage(
-      {super.key, required this.minutes, required this.seconds});
+  const CallerSelectionPage({super.key, required this.callDelay});
 
   @override
   Widget build(BuildContext context) {
@@ -19,10 +17,12 @@ class CallerSelectionPage extends StatelessWidget {
           CallerRow(
             leftCaller: heMo,
             rightCaller: qingYang,
+            callDelay: callDelay,
           ),
           CallerRow(
             leftCaller: pingXin,
             rightCaller: miaoGe,
+            callDelay: callDelay,
           )
         ],
       ),
@@ -32,8 +32,8 @@ class CallerSelectionPage extends StatelessWidget {
 
 class CallerRow extends StatelessWidget {
   final Caller leftCaller, rightCaller;
-  const CallerRow(
-      {super.key, required this.leftCaller, required this.rightCaller});
+  final int callDelay;
+  const CallerRow({super.key, required this.leftCaller, required this.rightCaller, required this.callDelay});
 
   @override
   Widget build(BuildContext context) {
@@ -42,10 +42,12 @@ class CallerRow extends StatelessWidget {
       children: [
         CallerButton(
           caller: leftCaller,
+          callDelay: callDelay,
           context: context,
         ),
         CallerButton(
           caller: rightCaller,
+          callDelay: callDelay,
           context: context,
         ),
       ],
@@ -55,8 +57,9 @@ class CallerRow extends StatelessWidget {
 
 class CallerButton extends StatelessWidget {
   final Caller caller;
+  final int callDelay;
   final BuildContext context;
-  const CallerButton({super.key, required this.caller, required this.context});
+  const CallerButton({super.key, required this.caller, required this.callDelay, required this.context});
 
   @override
   Widget build(BuildContext context) {
@@ -65,17 +68,13 @@ class CallerButton extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ThemeSelectionPage(caller: caller),
+            builder: (context) => ThemeSelectionPage(caller: caller, callDelay: callDelay),
           ),
         );
       },
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Image.asset(caller.imagePath,
-              height: 200, width: 150, fit: BoxFit.cover),
-          Text(caller.name)
-        ],
+        children: [Image.asset(caller.imagePath, height: 200, width: 150, fit: BoxFit.cover), Text(caller.name)],
       ),
     );
   }
