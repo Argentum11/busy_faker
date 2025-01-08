@@ -43,12 +43,10 @@ class CallerRow extends StatelessWidget {
         CallerButton(
           caller: leftCaller,
           callDelay: callDelay,
-          context: context,
         ),
         CallerButton(
           caller: rightCaller,
           callDelay: callDelay,
-          context: context,
         ),
       ],
     );
@@ -58,8 +56,7 @@ class CallerRow extends StatelessWidget {
 class CallerButton extends StatelessWidget {
   final Caller caller;
   final int callDelay;
-  final BuildContext context;
-  const CallerButton({super.key, required this.caller, required this.callDelay, required this.context});
+  const CallerButton({super.key, required this.caller, required this.callDelay});
 
   @override
   Widget build(BuildContext context) {
