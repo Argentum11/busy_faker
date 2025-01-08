@@ -366,12 +366,18 @@ class InCallPageState extends State<InCallPage> {
                       : 'Speech not available',
               style: const TextStyle(color: Colors.white),
             ),
+            SizedBox(
+              height: screenHeight * 0.02,
+            ),
             FloatingActionButton(
               onPressed:
                   // If not yet listening for speech start, otherwise stop
                   _speechToText.isNotListening ? _startListening : _stopListening,
               tooltip: 'Listen',
               child: Icon(_speechToText.isNotListening ? Icons.mic_off : Icons.mic),
+            ),
+            SizedBox(
+              height: screenHeight * 0.02,
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
