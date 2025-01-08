@@ -88,7 +88,8 @@ class FakePhoneCallPageState extends State<FakePhoneCallPage> {
       return Scaffold(
         backgroundColor: Colors.black,
         body: Center(
-          child: CircularProgressIndicator(color: Colors.white, value: (widget.callDelay - _delayTimeRemaining) / widget.callDelay),
+          child: CircularProgressIndicator(
+              color: Colors.white, value: widget.callDelay == 0 ? 0 : (widget.callDelay - _delayTimeRemaining) / widget.callDelay),
         ),
       );
     }
