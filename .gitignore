@@ -44,4 +44,4 @@ app.*.map.json
 
 
 # GPT API key
-lib/api_key.dart
+lib/services/ChatGPT/api_key.dart

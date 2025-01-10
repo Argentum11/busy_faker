@@ -5,7 +5,7 @@ import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'dart:developer' as dev;
 import 'package:busy_faker/services/tts_service.dart';
-import 'package:busy_faker/chat_gpt_service.dart';
+import 'package:busy_faker/services/ChatGPT/chat_gpt_service.dart';
 import 'package:busy_faker/services/chat.dart';
 import 'package:busy_faker/models/chat_message.dart';
 import 'package:busy_faker/models/chat_theme.dart';

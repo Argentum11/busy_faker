@@ -15,7 +15,7 @@ flutter pub get
 1. Copy the file
 
 ```bash
-cp lib/api_key_template.dart lib/api_key.dart
+cp lib/services/ChatGPT/api_key_template.dart lib/services/ChatGPT/api_key.dart
 ```
 
 2. Enter your GPT API key in lib/api_key.dart

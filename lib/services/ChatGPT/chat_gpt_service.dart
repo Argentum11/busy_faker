@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'dart:developer' as dev;
-import 'package:busy_faker/api_key.dart';
+import 'package:busy_faker/services/ChatGPT/api_key.dart';
 
 class ChatGPTService {
   static const String _baseUrl = 'https://api.openai.com/v1/chat/completions';
@@ -27,13 +27,11 @@ class ChatGPTService {
     });
 
     try {
-      final response =
-          await http.post(Uri.parse(_baseUrl), headers: headers, body: body);
+      final response = await http.post(Uri.parse(_baseUrl), headers: headers, body: body);
 
       if (response.statusCode == 200) {
         final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
-        final generatedMessage =
-            jsonResponse['choices'][0]['message']['content'];
+        final generatedMessage = jsonResponse['choices'][0]['message']['content'];
         dev.log('Response: $generatedMessage');
         return generatedMessage;
       } else {
