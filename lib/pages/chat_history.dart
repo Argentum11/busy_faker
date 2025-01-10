@@ -1,6 +1,6 @@
-import 'package:busy_faker/models/chat_message.dart';
 import 'package:flutter/material.dart';
 import 'package:busy_faker/services/chat.dart';
+import 'package:busy_faker/models/chat_message.dart';
 
 class ChatHistoryPage extends StatefulWidget {
   const ChatHistoryPage({super.key});

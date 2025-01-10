@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:numberpicker/numberpicker.dart';
-import 'caller_selection.dart';
+import 'package:busy_faker/pages/caller_selection.dart';
 
 class TimerSelectionPage extends StatefulWidget {
   const TimerSelectionPage({super.key});
