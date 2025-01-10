@@ -353,16 +353,10 @@ class InCallPageState extends State<InCallPage> {
               ),
             ),
             Text(
-              // If listening is active show the recognized words
               _speechToText.isListening
-                  // ignore: unnecessary_string_interpolations
-                  ? '$_lastWords'
-                  // If listening isn't active but could be tell the user
-                  // how to start it, otherwise indicate that speech
-                  // recognition is not yet ready or not supported on
-                  // the target device
+                  ? ''
                   : _speechEnabled
-                      ? 'Tap the microphone to start listening...'
+                      ? 'Tap the microphone to start speaking'
                       : 'Speech not available',
               style: const TextStyle(color: Colors.white),
             ),
