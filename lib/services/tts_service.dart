@@ -17,7 +17,7 @@ class TtsService {
 
   late FlutterTts flutterTts;
   TtsState ttsState = TtsState.stopped;
-  
+
   void Function(TtsState)? onStateChanged;
 
   Future<void> initialize(VoiceProfile voiceProfile) async {
