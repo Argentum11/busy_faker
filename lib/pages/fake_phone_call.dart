@@ -179,7 +179,6 @@ class InCallPageState extends State<InCallPage> {
   late Timer _timer;
   int _callDuration = 0; // 通話秒數
 
-  final TextEditingController _messageController = TextEditingController();
   String _requestMessage = '';
   String _responseMessage = '';
   String _lastWords = '';
@@ -215,7 +214,7 @@ class InCallPageState extends State<InCallPage> {
   @override
   void initState() {
     super.initState();
-    _chatGPTService = ChatGPTService(command:widget.chatTheme.command);
+    _chatGPTService = ChatGPTService(command: widget.chatTheme.command);
     _currentChatRecord = ChatRecord(
       caller: widget.caller.name,
       topic: widget.chatTheme.name, // You can customize the topic
@@ -266,6 +265,9 @@ class InCallPageState extends State<InCallPage> {
     setState(() {
       _lastWords = result.recognizedWords;
       _requestMessage = _lastWords;
+      if (!_speechToText.isListening && _requestMessage.trim().isNotEmpty) {
+        _saveMessage();
+      }
     });
   }
 
@@ -335,13 +337,6 @@ class InCallPageState extends State<InCallPage> {
               ),
             ),
             const SizedBox(height: 40),
-            TextField(
-              controller: _messageController,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Enter your message',
-              ),
-            ),
             const SizedBox(
               height: 10,
             ),
@@ -358,18 +353,15 @@ class InCallPageState extends State<InCallPage> {
               ),
             ),
             Text(
-              // If listening is active show the recognized words
               _speechToText.isListening
-                  // ignore: unnecessary_string_interpolations
-                  ? '$_lastWords'
-                  // If listening isn't active but could be tell the user
-                  // how to start it, otherwise indicate that speech
-                  // recognition is not yet ready or not supported on
-                  // the target device
+                  ? ''
                   : _speechEnabled
-                      ? 'Tap the microphone to start listening...'
+                      ? 'Tap the microphone to start speaking'
                       : 'Speech not available',
               style: const TextStyle(color: Colors.white),
+            ),
+            SizedBox(
+              height: screenHeight * 0.02,
             ),
             FloatingActionButton(
               onPressed:
@@ -377,6 +369,9 @@ class InCallPageState extends State<InCallPage> {
                   _speechToText.isNotListening ? _startListening : _stopListening,
               tooltip: 'Listen',
               child: Icon(_speechToText.isNotListening ? Icons.mic_off : Icons.mic),
+            ),
+            SizedBox(
+              height: screenHeight * 0.02,
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
