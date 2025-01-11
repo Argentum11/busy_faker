@@ -197,11 +197,11 @@ class InCallPageState extends State<InCallPage> {
               ),
             ),
             Text(
-              _speechToText.isListening
-                  ? ''
-                  : _speechEnabled
-                      ? 'Tap the microphone to start speaking'
-                      : 'Speech not available',
+              _speechEnabled
+                  ? _speechToText.isListening
+                      ? ''
+                      : 'Tap the microphone to start speaking'
+                  : 'Speech not available',
               style: const TextStyle(color: Colors.white),
             ),
             SizedBox(
