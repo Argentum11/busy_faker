@@ -5,7 +5,7 @@ import 'package:speech_to_text/speech_to_text.dart';
 import 'dart:developer' as dev;
 import 'package:busy_faker/services/text_to_speech.dart';
 import 'package:busy_faker/services/ChatGPT/chat_gpt_service.dart';
-import 'package:busy_faker/services/chat.dart';
+import 'package:busy_faker/services/chat_record_service.dart';
 import 'package:busy_faker/models/caller.dart';
 import 'package:busy_faker/models/chat_theme.dart';
 import 'package:busy_faker/models/chat_message.dart';
@@ -39,7 +39,7 @@ class InCallPageState extends State<InCallPage> {
 
   // Add ChatRecord reference
   late ChatRecord _currentChatRecord;
-  final ChatService _chatService = ChatService();
+  final ChatRecordService _chatRecordService = ChatRecordService();
 
   void _startCallTimer() {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -51,7 +51,7 @@ class InCallPageState extends State<InCallPage> {
 
   void _endCall() {
     _timer.cancel();
-    _chatService.addRecord(_currentChatRecord);
+    _chatRecordService.addRecord(_currentChatRecord);
     Navigator.pop(context); // 直接關閉頁面
   }
 

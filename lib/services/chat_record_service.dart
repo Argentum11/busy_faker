@@ -1,10 +1,10 @@
 import 'package:busy_faker/models/chat_message.dart';
 
-class ChatService {
-  static final ChatService _instance = ChatService._internal();
-  factory ChatService() => _instance;
+class ChatRecordService {
+  static final ChatRecordService _instance = ChatRecordService._internal();
+  factory ChatRecordService() => _instance;
 
-  ChatService._internal(){
+  ChatRecordService._internal() {
     ChatRecord c1 = ChatRecord(caller: "john", topic: "work");
     c1.messages.add(ChatMessage(request: "hello", response: "hello, how can i help you"));
     _records.add(c1);
