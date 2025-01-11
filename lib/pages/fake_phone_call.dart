@@ -4,7 +4,7 @@ import 'package:vibration/vibration.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'dart:developer' as dev;
-import 'package:busy_faker/services/tts_service.dart';
+import 'package:busy_faker/services/text_to_speech.dart';
 import 'package:busy_faker/services/ChatGPT/chat_gpt_service.dart';
 import 'package:busy_faker/services/chat.dart';
 import 'package:busy_faker/models/chat_message.dart';
@@ -184,8 +184,8 @@ class InCallPageState extends State<InCallPage> {
   String _lastWords = '';
 
   // text to speech
-  final TtsService _ttsService = TtsService();
-  TtsState ttsState = TtsState.stopped;
+  final TextToSpeechService _textToSpeechService = TextToSpeechService();
+  TextToSpeechState textToSpeechState = TextToSpeechState.stopped;
 
   late final ChatGPTService _chatGPTService;
 
@@ -227,15 +227,15 @@ class InCallPageState extends State<InCallPage> {
   @override
   void dispose() {
     _timer.cancel();
-    _ttsService.stop();
+    _textToSpeechService.stop();
     super.dispose();
   }
 
   void _initializeTts() async {
-    await _ttsService.initialize(widget.caller.voiceProfile);
-    _ttsService.onStateChanged = (TtsState newState) {
+    await _textToSpeechService.initialize(widget.caller.voiceProfile);
+    _textToSpeechService.onStateChanged = (TextToSpeechState newState) {
       setState(() {
-        ttsState = newState;
+        textToSpeechState = newState;
       });
     };
   }
@@ -272,7 +272,7 @@ class InCallPageState extends State<InCallPage> {
   }
 
   Future<void> _saveMessage() async {
-    _ttsService.stop();
+    _textToSpeechService.stop();
 
     setState(() {
       // _requestMessage = _messageController.text;
@@ -282,7 +282,7 @@ class InCallPageState extends State<InCallPage> {
     try {
       final response = await _chatGPTService.getChatResponse(_requestMessage);
       _responseMessage = response;
-      _ttsService.speak(_responseMessage);
+      _textToSpeechService.speak(_responseMessage);
       _currentChatRecord.messages.add(
         ChatMessage(
           request: _requestMessage,
