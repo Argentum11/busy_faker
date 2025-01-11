@@ -22,7 +22,7 @@ class FakePhoneCallPageState extends State<FakePhoneCallPage> {
   int _delayTimeRemaining = 0;
   bool _isDelaying = true;
 
-  void _startVibration() async {
+  Future<void> _startVibration() async {
     if (await Vibration.hasVibrator() ?? false) {
       Vibration.vibrate(duration: ringDuration * 1000); // Vibrate for 10 seconds
     }

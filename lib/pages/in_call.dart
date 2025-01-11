@@ -75,7 +75,7 @@ class InCallPageState extends State<InCallPage> {
     super.dispose();
   }
 
-  void _initializeTts() async {
+  Future<void> _initializeTts() async {
     await _textToSpeechService.initialize(widget.caller.voiceProfile);
     _textToSpeechService.onStateChanged = (TextToSpeechState newState) {
       setState(() {
@@ -84,12 +84,12 @@ class InCallPageState extends State<InCallPage> {
     };
   }
 
-  void _initSpeechToText() async {
+  Future<void> _initSpeechToText() async {
     _speechEnabled = await _speechToText.initialize();
     setState(() {});
   }
 
-  void _startListening() async {
+  Future<void> _startListening() async {
     await _speechToText.listen(onResult: _onSpeechResult);
     setState(() {});
   }
@@ -98,7 +98,7 @@ class InCallPageState extends State<InCallPage> {
   /// Note that there are also timeouts that each platform enforces
   /// and the SpeechToText plugin supports setting timeouts on the
   /// listen method.
-  void _stopListening() async {
+  Future<void> _stopListening() async {
     await _speechToText.stop();
     setState(() {});
   }
