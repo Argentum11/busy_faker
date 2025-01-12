@@ -86,12 +86,10 @@ class InCallPageState extends State<InCallPage> {
 
   Future<void> _initSpeechToText() async {
     _speechEnabled = await _speechToText.initialize();
-    setState(() {});
   }
 
   Future<void> _startListening() async {
     await _speechToText.listen(onResult: _onSpeechResult);
-    setState(() {});
   }
 
   /// Manually stop the active speech recognition session
@@ -100,7 +98,6 @@ class InCallPageState extends State<InCallPage> {
   /// listen method.
   Future<void> _stopListening() async {
     await _speechToText.stop();
-    setState(() {});
   }
 
   /// This is the callback that the SpeechToText plugin calls when
