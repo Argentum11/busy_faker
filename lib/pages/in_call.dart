@@ -65,7 +65,7 @@ class InCallPageState extends State<InCallPage> {
       topic: widget.chatTheme.name, // You can customize the topic
     );
     _startCallTimer();
-    _initializeTts();
+    _initializeTextToSpeech();
     _initSpeechToText();
   }
 
@@ -77,7 +77,7 @@ class InCallPageState extends State<InCallPage> {
     super.dispose();
   }
 
-  Future<void> _initializeTts() async {
+  Future<void> _initializeTextToSpeech() async {
     await _textToSpeechService.initialize(widget.caller.voiceProfile);
     _textToSpeechService.onStateChanged = (TextToSpeechState newState) {
       setState(() {
