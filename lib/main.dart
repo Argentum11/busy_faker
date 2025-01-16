@@ -1,6 +1,6 @@
-import 'package:busy_faker/pages/chat_history.dart';
 import 'package:flutter/material.dart';
-import 'pages/timer_selection.dart';
+import 'package:busy_faker/pages/chat_history.dart';
+import 'package:busy_faker/pages/timer_selection.dart';
 
 void main() {
   runApp(const BusyFaker());

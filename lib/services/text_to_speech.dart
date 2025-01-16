@@ -2,23 +2,23 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:busy_faker/models/voice_profile.dart';
 import 'dart:developer' as dev;
 
-enum TtsState { playing, stopped }
+enum TextToSpeechState { playing, stopped }
 
-class TtsService {
+class TextToSpeechService {
   // static: belongs to class (not instance)
   // final: can't be changed after initialization
-  static final TtsService _instance = TtsService._internal();
+  static final TextToSpeechService _instance = TextToSpeechService._internal();
 
   // return the singleton instance
-  factory TtsService() => _instance;
+  factory TextToSpeechService() => _instance;
 
   // definition of the constructor (empty)
-  TtsService._internal();
+  TextToSpeechService._internal();
 
   late FlutterTts flutterTts;
-  TtsState ttsState = TtsState.stopped;
-  
-  void Function(TtsState)? onStateChanged;
+  TextToSpeechState textToSpeechState = TextToSpeechState.stopped;
+
+  void Function(TextToSpeechState)? onStateChanged;
 
   Future<void> initialize(VoiceProfile voiceProfile) async {
     flutterTts = FlutterTts();
@@ -36,25 +36,25 @@ class TtsService {
     }
 
     flutterTts.setStartHandler(() {
-      _updateState(TtsState.playing);
+      _updateState(TextToSpeechState.playing);
       dev.log("Playing");
     });
 
     flutterTts.setCompletionHandler(() {
-      _updateState(TtsState.stopped);
+      _updateState(TextToSpeechState.stopped);
       dev.log("Complete");
     });
 
     flutterTts.setErrorHandler((msg) {
-      _updateState(TtsState.stopped);
+      _updateState(TextToSpeechState.stopped);
       dev.log("error: $msg");
     });
 
     await _setTtsConfiguration(voiceProfile);
   }
 
-  void _updateState(TtsState newState) {
-    ttsState = newState;
+  void _updateState(TextToSpeechState newState) {
+    textToSpeechState = newState;
     onStateChanged?.call(newState);
   }
 
@@ -97,7 +97,7 @@ class TtsService {
 
   Future<void> stop() async {
     var result = await flutterTts.stop();
-    if (result == 1) _updateState(TtsState.stopped);
+    if (result == 1) _updateState(TextToSpeechState.stopped);
   }
 
   void dispose() {

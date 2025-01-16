@@ -1,6 +1,6 @@
-import 'package:busy_faker/models/chat_message.dart';
 import 'package:flutter/material.dart';
-import 'package:busy_faker/services/chat.dart';
+import 'package:busy_faker/services/chat_record_service.dart';
+import 'package:busy_faker/models/chat_message.dart';
 
 class ChatHistoryPage extends StatefulWidget {
   const ChatHistoryPage({super.key});
@@ -36,7 +36,7 @@ class _ChatHistoryPageState extends State<ChatHistoryPage> {
 
   @override
   Widget build(BuildContext context) {
-    final records = ChatService().records;
+    final records = ChatRecordService().records;
     final filteredRecords = _filterRecords(records);
 
     return Scaffold(
