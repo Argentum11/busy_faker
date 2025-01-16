@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:speech_to_text/speech_recognition_result.dart';
-import 'package:speech_to_text/speech_to_text.dart';
 import 'dart:developer' as dev;
 import 'package:busy_faker/services/text_to_speech.dart';
 import 'package:busy_faker/services/ChatGPT/chat_gpt_service.dart';
 import 'package:busy_faker/services/chat_record_service.dart';
+import 'package:busy_faker/services/speech_to_text.dart';
 import 'package:busy_faker/models/caller.dart';
 import 'package:busy_faker/models/chat_theme.dart';
 import 'package:busy_faker/models/chat_message.dart';
@@ -34,7 +34,8 @@ class InCallPageState extends State<InCallPage> {
   late final ChatGPTService _chatGPTService;
 
   // speech to text
-  final SpeechToText _speechToText = SpeechToText();
+  //final SpeechToText _speechToText = SpeechToText();
+  final SpeechToTextService _speechToTextService = SpeechToTextService();
   bool _speechEnabled = false;
 
   // Add ChatRecord reference
@@ -72,6 +73,7 @@ class InCallPageState extends State<InCallPage> {
   void dispose() {
     _timer.cancel();
     _textToSpeechService.stop();
+    _speechToTextService.dispose();
     super.dispose();
   }
 
@@ -85,19 +87,11 @@ class InCallPageState extends State<InCallPage> {
   }
 
   Future<void> _initSpeechToText() async {
-    _speechEnabled = await _speechToText.initialize();
-  }
-
-  Future<void> _startListening() async {
-    await _speechToText.listen(onResult: _onSpeechResult);
-  }
-
-  /// Manually stop the active speech recognition session
-  /// Note that there are also timeouts that each platform enforces
-  /// and the SpeechToText plugin supports setting timeouts on the
-  /// listen method.
-  Future<void> _stopListening() async {
-    await _speechToText.stop();
+    _speechToTextService.initialize();
+    _speechToTextService.onSpeechResult = _onSpeechResult;
+    _speechToTextService.updateSpeechStatus = (newStatus) {
+      _speechEnabled = newStatus;
+    };
   }
 
   /// This is the callback that the SpeechToText plugin calls when
@@ -106,7 +100,7 @@ class InCallPageState extends State<InCallPage> {
     setState(() {
       _lastWords = result.recognizedWords;
       _requestMessage = _lastWords;
-      if (!_speechToText.isListening && _requestMessage.trim().isNotEmpty) {
+      if (!_speechToTextService.isListening && _requestMessage.trim().isNotEmpty) {
         _saveMessage();
       }
     });
@@ -195,7 +189,7 @@ class InCallPageState extends State<InCallPage> {
             ),
             Text(
               _speechEnabled
-                  ? _speechToText.isListening
+                  ? _speechToTextService.isListening
                       ? ''
                       : 'Tap the microphone to start speaking'
                   : 'Speech not available',
@@ -207,9 +201,9 @@ class InCallPageState extends State<InCallPage> {
             FloatingActionButton(
               onPressed:
                   // If not yet listening for speech start, otherwise stop
-                  _speechToText.isNotListening ? _startListening : _stopListening,
+                  _speechToTextService.isNotListening ? _speechToTextService.startListening : _speechToTextService.stopListening,
               tooltip: 'Listen',
-              child: Icon(_speechToText.isNotListening ? Icons.mic_off : Icons.mic),
+              child: Icon(_speechToTextService.isNotListening ? Icons.mic_off : Icons.mic),
             ),
             SizedBox(
               height: screenHeight * 0.02,
