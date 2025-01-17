@@ -10,7 +10,7 @@ class CallerSelectionPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Select a caller')),
+      appBar: AppBar(title: const Text('請選擇來電者')),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [

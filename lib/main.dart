@@ -40,11 +40,11 @@ class BusyFakerState extends State<BusyFaker> {
           items: const [
             BottomNavigationBarItem(
               icon: Icon(Icons.timer),
-              label: 'Timer',
+              label: '計時器',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.history),
-              label: 'Chat history',
+              label: '聊天記錄',
             ),
           ],
         ),

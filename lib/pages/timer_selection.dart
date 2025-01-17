@@ -29,24 +29,19 @@ class TimerSelectionPageState extends State<TimerSelectionPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Select Timer'),
+        title: const Text('請選擇來電時間'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
-              "Select Timer Duration",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Column(
                   children: [
-                    const Text("Minutes", style: TextStyle(fontSize: 16)),
+                    const Text("分鐘", style: TextStyle(fontSize: 16)),
                     NumberPicker(
                       value: _minutes,
                       minValue: 0,
@@ -58,7 +53,7 @@ class TimerSelectionPageState extends State<TimerSelectionPage> {
                 const SizedBox(width: 20),
                 Column(
                   children: [
-                    const Text("Seconds", style: TextStyle(fontSize: 16)),
+                    const Text("秒", style: TextStyle(fontSize: 16)),
                     NumberPicker(
                       value: _seconds,
                       minValue: 0,

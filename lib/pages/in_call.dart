@@ -143,7 +143,7 @@ class InCallPageState extends State<InCallPage> {
               height: screenHeight * 0.1,
             ),
             const Text(
-              'In Call',
+              '通話中',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 24,
@@ -191,8 +191,8 @@ class InCallPageState extends State<InCallPage> {
               _speechEnabled
                   ? _speechToTextService.isListening
                       ? ''
-                      : 'Tap the microphone to start speaking'
-                  : 'Speech not available',
+                      : '點擊麥克風開始說話'
+                  : '麥克風尚未啟用',
               style: const TextStyle(color: Colors.white),
             ),
             SizedBox(

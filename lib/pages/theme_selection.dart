@@ -14,7 +14,7 @@ class ThemeSelectionPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Select a theme',
+          '請選擇聊天主題',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 24,

@@ -103,7 +103,7 @@ class FakePhoneCallPageState extends State<FakePhoneCallPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text(
-              'Incoming Call',
+              '來電',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 24,

@@ -41,14 +41,14 @@ class _ChatHistoryPageState extends State<ChatHistoryPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Chat History'),
+        title: const Text('聊天記錄'),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(60),
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: SearchBar(
               controller: _searchController,
-              hintText: 'Search in chat history...',
+              hintText: '搜尋聊天記錄...',
               onChanged: (value) {
                 setState(() {
                   _searchQuery = value;
@@ -78,7 +78,7 @@ class _ChatHistoryPageState extends State<ChatHistoryPage> {
             if (filteredRecords.isEmpty && _searchQuery.isNotEmpty)
               const Padding(
                 padding: EdgeInsets.all(16.0),
-                child: Text('No results found'),
+                child: Text('未找到符合搜尋字詞的記錄'),
               ),
             Expanded(
               child: ListView.builder(
