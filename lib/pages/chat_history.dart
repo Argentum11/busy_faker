@@ -22,8 +22,8 @@ class _ChatHistoryPageState extends State<ChatHistoryPage> {
   List<ChatRecord> _filterRecords(List<ChatRecord> records) {
     if (_searchQuery.isEmpty) return records;
 
+    // Search in caller and topic
     return records.where((record) {
-      // Search in caller and topic
       if (record.caller.toLowerCase().contains(_searchQuery.toLowerCase()) || record.topic.toLowerCase().contains(_searchQuery.toLowerCase())) {
         return true;
       }
@@ -36,9 +36,6 @@ class _ChatHistoryPageState extends State<ChatHistoryPage> {
 
   @override
   Widget build(BuildContext context) {
-    final records = ChatRecordService().records;
-    final filteredRecords = _filterRecords(records);
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('聊天記錄'),
@@ -72,28 +69,64 @@ class _ChatHistoryPageState extends State<ChatHistoryPage> {
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 5.0),
-        child: Column(
-          children: [
-            if (filteredRecords.isEmpty && _searchQuery.isNotEmpty)
-              const Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Text('未找到符合搜尋字詞的記錄'),
-              ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: filteredRecords.length,
-                itemBuilder: (context, index) {
-                  final record = filteredRecords[index];
-                  return ChatRecordBlock(
-                    record: record,
+          padding: const EdgeInsets.symmetric(horizontal: 5.0),
+          child: FutureBuilder<List<ChatRecord>>(
+              future: ChatRecordService().getRecords(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
                   );
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
+                } else if (snapshot.hasError) {
+                  return Center(
+                    child: Text('Error: ${snapshot.error}'),
+                  );
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Center(
+                    child: Text('尚無聊天記錄'),
+                  );
+                }
+
+                final filteredRecords = _filterRecords(snapshot.data!);
+
+                if (filteredRecords.isEmpty && _searchQuery.isNotEmpty) {
+                  return const Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Text('未找到符合搜尋字詞的記錄'),
+                  );
+                }
+
+                return ListView.builder(
+                  itemCount: filteredRecords.length,
+                  itemBuilder: (context, index) {
+                    final record = filteredRecords[index];
+                    return ChatRecordBlock(
+                      record: record,
+                    );
+                  },
+                );
+              })
+          // Column(
+          //   children: [
+          //     if (filteredRecords.isEmpty && _searchQuery.isNotEmpty)
+          //       const Padding(
+          //         padding: EdgeInsets.all(16.0),
+          //         child: Text('未找到符合搜尋字詞的記錄'),
+          //       ),
+          //     Expanded(
+          //       child: ListView.builder(
+          //         itemCount: filteredRecords.length,
+          //         itemBuilder: (context, index) {
+          //           final record = filteredRecords[index];
+          //           return ChatRecordBlock(
+          //             record: record,
+          //           );
+          //         },
+          //       ),
+          //     ),
+          //   ],
+          // ),
+          ),
     );
   }
 }

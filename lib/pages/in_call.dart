@@ -52,7 +52,7 @@ class InCallPageState extends State<InCallPage> {
 
   void _endCall() {
     _timer.cancel();
-    _chatRecordService.addRecord(_currentChatRecord);
+    _chatRecordService.saveRecord(_currentChatRecord);
     Navigator.pop(context); // 直接關閉頁面
   }
 

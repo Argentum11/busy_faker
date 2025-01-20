@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:busy_faker/pages/chat_history.dart';
 import 'package:busy_faker/pages/timer_selection.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:busy_faker/models/chat_message.dart';
 
-void main() {
+void main() async {
+  await Hive.initFlutter();
+  Hive.registerAdapter(ChatMessageAdapter());
+  Hive.registerAdapter(ChatRecordAdapter());
+
   runApp(const BusyFaker());
 }
 
