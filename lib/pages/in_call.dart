@@ -101,16 +101,15 @@ class InCallPageState extends State<InCallPage> {
       _lastWords = result.recognizedWords;
       _requestMessage = _lastWords;
       if (!_speechToTextService.isListening && _requestMessage.trim().isNotEmpty) {
-        _saveMessage();
+        _processChat();
       }
     });
   }
 
-  Future<void> _saveMessage() async {
+  Future<void> _processChat() async {
     _textToSpeechService.stop();
 
     setState(() {
-      // _requestMessage = _messageController.text;
       _responseMessage = 'Processing...';
     });
 
@@ -181,7 +180,6 @@ class InCallPageState extends State<InCallPage> {
             const SizedBox(
               height: 10,
             ),
-            TextButton(onPressed: _saveMessage, child: const Text("Chat")),
             Expanded(
               child: SingleChildScrollView(
                 child: Padding(
