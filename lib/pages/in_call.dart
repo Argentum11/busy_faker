@@ -129,6 +129,12 @@ class InCallPageState extends State<InCallPage> {
     }
   }
 
+  String _formatDuration(int duration) {
+    int minutes = (duration / 60).floor();
+    int seconds = duration % 60;
+    return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
@@ -165,7 +171,7 @@ class InCallPageState extends State<InCallPage> {
             ),
             const SizedBox(height: 10),
             Text(
-              '${_callDuration}s',
+              _formatDuration(_callDuration),
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 20,
