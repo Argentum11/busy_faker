@@ -1,9 +1,13 @@
+import 'package:busy_faker/models/caller.dart';
+import 'package:busy_faker/models/chat_theme.dart';
+import 'package:busy_faker/pages/fake_phone_call.dart';
 import 'package:flutter/material.dart';
 import 'package:numberpicker/numberpicker.dart';
-import 'package:busy_faker/pages/caller_selection.dart';
 
 class TimerSelectionPage extends StatefulWidget {
-  const TimerSelectionPage({super.key});
+  final Caller caller;
+  final ChatTheme chatTheme;
+  const TimerSelectionPage({super.key, required this.caller, required this.chatTheme});
 
   @override
   TimerSelectionPageState createState() => TimerSelectionPageState();
@@ -41,7 +45,9 @@ class TimerSelectionPageState extends State<TimerSelectionPage> with SingleTicke
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => CallerSelectionPage(
+        builder: (context) => FakePhoneCallPage(
+          caller: widget.caller,
+          chatTheme: widget.chatTheme,
           callDelay: callDelay,
         ),
       ),

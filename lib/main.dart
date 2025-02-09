@@ -1,6 +1,6 @@
+import 'package:busy_faker/pages/caller_selection.dart';
 import 'package:flutter/material.dart';
 import 'package:busy_faker/pages/chat_history.dart';
-import 'package:busy_faker/pages/timer_selection.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:busy_faker/models/chat_message.dart';
 
@@ -22,7 +22,7 @@ class BusyFaker extends StatefulWidget {
 class BusyFakerState extends State<BusyFaker> {
   int _currentIndex = 0;
   final List<Widget> _pages = [
-    const TimerSelectionPage(),
+    const CallerSelectionPage(),
     const ChatHistoryPage(),
   ];
 
@@ -45,8 +45,8 @@ class BusyFakerState extends State<BusyFaker> {
           },
           items: const [
             BottomNavigationBarItem(
-              icon: Icon(Icons.timer),
-              label: '計時器',
+              icon: Icon(Icons.call),
+              label: '通話',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.history),
