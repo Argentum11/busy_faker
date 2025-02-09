@@ -3,9 +3,7 @@ import 'package:busy_faker/pages/theme_selection.dart';
 import 'package:busy_faker/models/caller.dart';
 
 class CallerSelectionPage extends StatelessWidget {
-  final int callDelay;
-
-  const CallerSelectionPage({super.key, required this.callDelay});
+  const CallerSelectionPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -43,12 +41,10 @@ class CallerSelectionPage extends StatelessWidget {
               CallerRow(
                 leftCaller: heMo,
                 rightCaller: qingYang,
-                callDelay: callDelay,
               ),
               CallerRow(
                 leftCaller: pingXin,
                 rightCaller: miaoGe,
-                callDelay: callDelay,
               ),
             ],
           ),
@@ -60,13 +56,11 @@ class CallerSelectionPage extends StatelessWidget {
 
 class CallerRow extends StatelessWidget {
   final Caller leftCaller, rightCaller;
-  final int callDelay;
 
   const CallerRow({
     super.key,
     required this.leftCaller,
     required this.rightCaller,
-    required this.callDelay,
   });
 
   @override
@@ -78,11 +72,9 @@ class CallerRow extends StatelessWidget {
         children: [
           CallerButton(
             caller: leftCaller,
-            callDelay: callDelay,
           ),
           CallerButton(
             caller: rightCaller,
-            callDelay: callDelay,
           ),
         ],
       ),
@@ -92,12 +84,10 @@ class CallerRow extends StatelessWidget {
 
 class CallerButton extends StatefulWidget {
   final Caller caller;
-  final int callDelay;
 
   const CallerButton({
     super.key,
     required this.caller,
-    required this.callDelay,
   });
 
   @override
@@ -142,7 +132,6 @@ class _CallerButtonState extends State<CallerButton> with SingleTickerProviderSt
           MaterialPageRoute(
             builder: (context) => ThemeSelectionPage(
               caller: widget.caller,
-              callDelay: widget.callDelay,
             ),
           ),
         );

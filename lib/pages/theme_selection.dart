@@ -1,13 +1,12 @@
+import 'package:busy_faker/pages/timer_selection.dart';
 import 'package:flutter/material.dart';
-import 'package:busy_faker/pages/fake_phone_call.dart';
 import 'package:busy_faker/models/caller.dart';
 import 'package:busy_faker/models/chat_theme.dart';
 
 class ThemeSelectionPage extends StatelessWidget {
   final Caller caller;
-  final int callDelay;
 
-  const ThemeSelectionPage({super.key, required this.caller, required this.callDelay});
+  const ThemeSelectionPage({super.key, required this.caller});
 
   @override
   Widget build(BuildContext context) {
@@ -30,10 +29,10 @@ class ThemeSelectionPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              ThemeButton(chatTheme: ai, caller: caller, callDelay: callDelay),
-              ThemeButton(chatTheme: emergencyWork, caller: caller, callDelay: callDelay),
-              ThemeButton(chatTheme: socialRelief, caller: caller, callDelay: callDelay),
-              ThemeButton(chatTheme: nightCompanionship, caller: caller, callDelay: callDelay),
+              ThemeButton(chatTheme: ai, caller: caller),
+              ThemeButton(chatTheme: emergencyWork, caller: caller),
+              ThemeButton(chatTheme: socialRelief, caller: caller),
+              ThemeButton(chatTheme: nightCompanionship, caller: caller),
             ],
           ),
         ),
@@ -45,13 +44,11 @@ class ThemeSelectionPage extends StatelessWidget {
 class ThemeButton extends StatelessWidget {
   final Caller caller;
   final ChatTheme chatTheme;
-  final int callDelay;
 
   const ThemeButton({
     super.key,
     required this.chatTheme,
     required this.caller,
-    required this.callDelay,
   });
 
   @override
@@ -68,9 +65,8 @@ class ThemeButton extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => FakePhoneCallPage(
+              builder: (context) => TimerSelectionPage(
                 caller: caller,
-                callDelay: callDelay,
                 chatTheme: chatTheme,
               ),
             ),

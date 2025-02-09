@@ -7,9 +7,9 @@ import 'package:busy_faker/models/caller.dart';
 
 class FakePhoneCallPage extends StatefulWidget {
   final Caller caller;
-  final int callDelay;
   final ChatTheme chatTheme;
-  const FakePhoneCallPage({super.key, required this.caller, required this.callDelay, required this.chatTheme});
+  final int callDelay;
+  const FakePhoneCallPage({super.key, required this.caller, required this.chatTheme, required this.callDelay});
 
   @override
   FakePhoneCallPageState createState() => FakePhoneCallPageState();

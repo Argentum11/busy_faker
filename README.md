@@ -6,9 +6,9 @@ A mobile app that helps you create fake phone calls to avoid social interactions
 
 ## Screenshots
 <div style="display: flex; justify-content: space-between;">
-  <img src=".github/readme_images/select_timer.jpg" width="200" height="400" alt="Timer Selection">
   <img src=".github/readme_images/select_caller.jpg" width="200" height="400" alt="Caller Selection">
   <img src=".github/readme_images/select_theme.jpg" width="200" height="400" alt="Theme Selection">
+  <img src=".github/readme_images/select_timer.jpg" width="200" height="400" alt="Timer Selection">
   <img src=".github/readme_images/phone_call.jpg" width="200" height="400" alt="Incoming Call">
   <img src=".github/readme_images/in_call.jpg" width="200" height="400" alt="In Call Screen">
 </div>
