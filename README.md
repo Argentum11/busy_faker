@@ -11,14 +11,17 @@ A mobile app that helps you create fake phone calls to avoid social interactions
   <img src=".github/readme_images/select_timer.jpg" width="200" height="400" alt="Timer Selection">
   <img src=".github/readme_images/phone_call.jpg" width="200" height="400" alt="Incoming Call">
   <img src=".github/readme_images/in_call.jpg" width="200" height="400" alt="In Call Screen">
-  <img src=".github/readme_images/history.jpg" width="200" height="400" alt="In Call Screen">
+  <img src=".github/readme_images/history.jpg" width="200" height="400" alt="Chat history">
+  <img src=".github/readme_images/confirm_to_delete.jpg" width="200" height="400" alt="Confirm to delete chat history">
+  <img src=".github/readme_images/history_deleted.jpg" width="200" height="400" alt="Chat history deleted">
 </div>
 
 ## Features
 - Customizable phone call countdown timer
 - Multiple caller profiles
 - Themed call interfaces
-- AI-powered call scenario generation
+- Generate realistic call scenarios using AI
+- Save and manage history locally on your device
 
 ## Prerequisites
 - Flutter SDK
