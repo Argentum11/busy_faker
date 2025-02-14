@@ -17,7 +17,7 @@ class ChatRecordService {
     return box.values.toList();
   }
 
-  void clearRecords() async {
+  Future<void> clearRecords() async {
     final box = await Hive.openBox<ChatRecord>('chatRecords');
     await box.clear();
   }

@@ -12,6 +12,13 @@ class ChatHistoryPage extends StatefulWidget {
 class _ChatHistoryPageState extends State<ChatHistoryPage> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
+  late Future<List<ChatRecord>> _recordsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _recordsFuture = ChatRecordService().getRecords();
+  }
 
   @override
   void dispose() {
@@ -34,9 +41,63 @@ class _ChatHistoryPageState extends State<ChatHistoryPage> {
     }).toList();
   }
 
+  void _showClearConfirmationDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text('確認清除'),
+          content: const Text('確定要清除所有聊天記錄嗎？此操作無法復原。'),
+          actions: [
+            TextButton(
+              child: const Text('取消'),
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('確定清除'),
+              onPressed: () async {
+                // Capture the scaffold context before async operation
+                final scaffoldContext = ScaffoldMessenger.of(context);
+
+                // Close the dialog first
+                Navigator.of(dialogContext).pop();
+
+                // Clear records and handle the result
+                try {
+                  await ChatRecordService().clearRecords();
+                  if (mounted) {
+                    setState(() {
+                      _recordsFuture = ChatRecordService().getRecords();
+                    });
+                    scaffoldContext.showSnackBar(
+                      const SnackBar(content: Text('已清除所有聊天記錄')),
+                    );
+                  }
+                } catch (e) {
+                  if (mounted) {
+                    scaffoldContext.showSnackBar(
+                      SnackBar(content: Text('清除記錄時發生錯誤: $e')),
+                    );
+                  }
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: _showClearConfirmationDialog,
+        tooltip: '清除所有記錄',
+        child: const Icon(Icons.delete_forever),
+      ),
       appBar: AppBar(
         title: const Text('聊天記錄'),
         bottom: PreferredSize(
@@ -71,7 +132,7 @@ class _ChatHistoryPageState extends State<ChatHistoryPage> {
       body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 5.0),
           child: FutureBuilder<List<ChatRecord>>(
-              future: ChatRecordService().getRecords(),
+              future: _recordsFuture,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(
@@ -105,28 +166,7 @@ class _ChatHistoryPageState extends State<ChatHistoryPage> {
                     );
                   },
                 );
-              })
-          // Column(
-          //   children: [
-          //     if (filteredRecords.isEmpty && _searchQuery.isNotEmpty)
-          //       const Padding(
-          //         padding: EdgeInsets.all(16.0),
-          //         child: Text('未找到符合搜尋字詞的記錄'),
-          //       ),
-          //     Expanded(
-          //       child: ListView.builder(
-          //         itemCount: filteredRecords.length,
-          //         itemBuilder: (context, index) {
-          //           final record = filteredRecords[index];
-          //           return ChatRecordBlock(
-          //             record: record,
-          //           );
-          //         },
-          //       ),
-          //     ),
-          //   ],
-          // ),
-          ),
+              })),
     );
   }
 }
